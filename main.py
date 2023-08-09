@@ -258,7 +258,7 @@ while running:
         screen.blit(player2LivesTxt,(580, 15))
 
         if winnerLastRound == True:
-            txtsurf2 = font.render("Player " + lastWinner + "won last round", True, (255,0,0))
+            txtsurf2 = font.render("Player " + lastWinner + " won last round", True, (255,0,0))
             screen.blit(txtsurf2,(300, 50))
             cubeColor = ((randrange(255)), (randrange(255)), (randrange(255)))
 
