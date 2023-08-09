@@ -1,6 +1,5 @@
 import pygame
 from pygame.locals import *
-import os
 from random import randrange
 #import functions
 from functions import GetRandomLocationOnScreen
