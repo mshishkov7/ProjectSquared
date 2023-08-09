@@ -32,16 +32,22 @@ def getCenter(SCREEN_WIDTH, SCREEN_HEIGHT, surface1):
     return (x, y)
 
 def CreateListOfFiresAndLocations(SCREEN_WIDTH, SCREEN_HEIGHT, j):
-    l1 = [(GetRandomLocationOnScreen(SCREEN_WIDTH), GetRandomLocationOnScreen(SCREEN_HEIGHT))]
+    xfire = GetRandomLocationOnScreen(SCREEN_WIDTH)
+    yfire = GetRandomLocationOnScreen(SCREEN_HEIGHT)
+    if yfire < 60:
+        yfire = 70
     i = 0
-    while i >= j-1:
+    listOfFires = [(xfire, yfire)]
+    while i < j-1:  # Corrected loop condition |||| 
         xfire = GetRandomLocationOnScreen(SCREEN_WIDTH)
         yfire = GetRandomLocationOnScreen(SCREEN_HEIGHT)
         if yfire < 60:
             yfire = 70
-        l1.append((xfire,yfire))
-        i=i+1
-        return l1
+            
+        listOfFires.append((xfire, yfire))
+        i += 1
+    return listOfFires
+        
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -96,20 +102,8 @@ isThereAWinner = False
 running = True
 
 #Fire Logic
-numberOfFiresOnScreen = 5
-listOfFire_xy = [(GetRandomLocationOnScreen(SCREEN_WIDTH), GetRandomLocationOnScreen(SCREEN_HEIGHT))]
-i = 0
-
-while i < 4:  # Corrected loop condition
-    xfire = GetRandomLocationOnScreen(SCREEN_WIDTH)
-    yfire = GetRandomLocationOnScreen(SCREEN_HEIGHT)
-    
-    if yfire < 60:
-        yfire = 70
-    
-    listOfFire_xy.append((xfire, yfire))
-    
-    i += 1
+numberOfFiresOnScreen = 6
+listOfFire_xy = CreateListOfFiresAndLocations(SCREEN_WIDTH, SCREEN_HEIGHT, numberOfFiresOnScreen)
 
 print(listOfFire_xy)
     
