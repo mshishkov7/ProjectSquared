@@ -1,4 +1,6 @@
 import pygame
+from pygame.locals import *
+import os
 from random import randrange
 #import functions
 from functions import GetRandomLocationOnScreen
@@ -23,15 +25,18 @@ from pygame.locals import (
 
 #init the game
 pygame.init()
-pygame.display.set_caption('test123')
+pygame.display.set_caption('Square Hop v0.1')
+Icon = pygame.image.load('hero150x50.png')
+pygame.display.set_icon(Icon)
+
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
-hero1 = "hero1-50x50.png"
-hero2 = "hero2-50x50.png"
-hero3 = "hero3-50x50.png"
-hero4 = "hero4-50x50.png"
+hero1 = "hero150x50.png"
+hero2 = "hero250x50.png"
+hero3 = "hero350x50.png"
+hero4 = "hero450x50.png"
 currentHeroPlayer1 = hero1
 isHeroSellectedPlayer1 = False
 currentHeroPlayer2 = hero2
@@ -118,10 +123,10 @@ while running:
         chooseAHeroTxt = font.render("Player 1 choose a hero UP/Down/Left/Right", True, (0,0,0))
         screen.blit(chooseAHeroTxt,(10, 10))
 
-        chooseImgHero1 = pygame.image.load("hero1-200x200.png")
-        chooseImgHero2 = pygame.image.load("hero2-200x200.png")
-        chooseImgHero3 = pygame.image.load("hero3-200x200.png")
-        chooseImgHero4 = pygame.image.load("hero4-200x200.png")
+        chooseImgHero1 = pygame.image.load("hero1200x200.png")
+        chooseImgHero2 = pygame.image.load("hero2200x200.png")
+        chooseImgHero3 = pygame.image.load("hero3200x200.png")
+        chooseImgHero4 = pygame.image.load("hero4200x200.png")
         arrowsImg = pygame.image.load("arrow.png")
 
         screen.blit(chooseImgHero1, (75, 200))
@@ -166,10 +171,10 @@ while running:
         chooseAHeroTxt = font.render("Player 2 choose a hero W/A/S/D", True, (0,0,0))
         screen.blit(chooseAHeroTxt,(10, 10))
 
-        chooseImgHero1 = pygame.image.load("hero1-200x200.png")
-        chooseImgHero2 = pygame.image.load("hero2-200x200.png")
-        chooseImgHero3 = pygame.image.load("hero3-200x200.png")
-        chooseImgHero4 = pygame.image.load("hero4-200x200.png")
+        chooseImgHero1 = pygame.image.load("hero1200x200.png")
+        chooseImgHero2 = pygame.image.load("hero2200x200.png")
+        chooseImgHero3 = pygame.image.load("hero3200x200.png")
+        chooseImgHero4 = pygame.image.load("hero4200x200.png")
         arrowsImg = pygame.image.load("arrow.png")
 
         screen.blit(chooseImgHero1, (75, 200))
@@ -191,35 +196,35 @@ while running:
                 if event.key == K_ESCAPE:
                     running = False
                 if event.key == K_LEFT and (player1_location_x > (SCREEN_WIDTH - SCREEN_WIDTH)) and endOfGameBool == False:
-                    print(player1_location_x)
+                    #print(player1_location_x)
                     player1_location_x = player1_location_x - moveLenght
                     winnerLastRound = False
                 if event.key == K_RIGHT and (player1_location_x < (SCREEN_WIDTH - 50)) and endOfGameBool == False:
-                    print(player1_location_x)
+                    #print(player1_location_x)
                     player1_location_x = player1_location_x + moveLenght 
                     winnerLastRound = False
                 if event.key == K_UP and (player1_location_y > (SCREEN_HEIGHT - SCREEN_HEIGHT + 50)) and endOfGameBool == False:
-                    print(player1_location_y)
+                    #print(player1_location_y)
                     player1_location_y = player1_location_y - moveLenght  
                     winnerLastRound = False
                 if event.key == K_DOWN and (player1_location_y < (SCREEN_HEIGHT - 50)) and endOfGameBool == False:
-                    print(player1_location_y)
+                    #print(player1_location_y)
                     player1_location_y = player1_location_y + moveLenght  
                     winnerLastRound = False
                 if event.key == K_a and (player2_location_x > (SCREEN_WIDTH - SCREEN_WIDTH)) and endOfGameBool == False:
-                    print(player2_location_x)
+                    #print(player2_location_x)
                     player2_location_x = player2_location_x - moveLenght
                     winnerLastRound = False
                 if event.key == K_d and (player2_location_x < (SCREEN_WIDTH - 50)) and endOfGameBool == False:
-                    print(player2_location_x)
+                    #print(player2_location_x)
                     player2_location_x = player2_location_x + moveLenght 
                     winnerLastRound = False
                 if event.key == K_w and (player2_location_y > (SCREEN_HEIGHT - SCREEN_HEIGHT + 50)) and endOfGameBool == False:
-                    print(player2_location_y)
+                    #print(player2_location_y)
                     player2_location_y = player2_location_y - moveLenght  
                     winnerLastRound = False
                 if event.key == K_s and (player2_location_y < (SCREEN_HEIGHT - 50)) and endOfGameBool == False:
-                    print(player2_location_y)
+                    #print(player2_location_y)
                     player2_location_y = player2_location_y + moveLenght  
                     winnerLastRound = False
                 if event.key == K_r:
@@ -304,6 +309,7 @@ while running:
             endOfGameBool = False
             entOfLevelLocation_x = GetRandomLocationOnScreen(SCREEN_WIDTH)
             entOfLevelLocation_y = GetRandomLocationOnScreen(SCREEN_HEIGHT)
+            listOfFire_xy = CreateListOfFiresAndLocations(SCREEN_WIDTH, SCREEN_HEIGHT, numberOfFiresOnScreen)
             if entOfLevelLocation_y < 60:
                 entOfLevelLocation_y = 70
 
@@ -339,11 +345,11 @@ while running:
                     isThereAWinner = False
                     player1Lives = 5
                     player2Lives = 5
-                    print(isThereAWinner)
+                    listOfFire_xy = CreateListOfFiresAndLocations(SCREEN_WIDTH, SCREEN_HEIGHT, numberOfFiresOnScreen)
             elif event.type == QUIT:
                 running = False
 
-        screen.fill("#BF5840") 
+        screen.fill("#BF5840")
 
         screen.blit(topBorder, (0, 0))
 
