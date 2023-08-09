@@ -1,6 +1,10 @@
 import pygame
 from random import randrange
-
+#import functions
+from functions import GetRandomLocationOnScreen
+from functions import getCenter
+from functions import CreateListOfFiresAndLocations
+######################################################
 #add detection of keypresses and some keys
 from pygame.locals import (
     K_w,
@@ -19,35 +23,7 @@ from pygame.locals import (
 
 #init the game
 pygame.init()
-
-def GetRandomLocationOnScreen(xy):
-    r = randrange((xy - 50))
-    rangeCalc = int(r / 10)
-    output = rangeCalc * 10
-    return output
-
-def getCenter(SCREEN_WIDTH, SCREEN_HEIGHT, surface1):
-    x = (SCREEN_WIDTH - surface1.get_width())/2
-    y = (SCREEN_HEIGHT - surface1.get_height())/2
-    return (x, y)
-
-def CreateListOfFiresAndLocations(SCREEN_WIDTH, SCREEN_HEIGHT, j):
-    xfire = GetRandomLocationOnScreen(SCREEN_WIDTH)
-    yfire = GetRandomLocationOnScreen(SCREEN_HEIGHT)
-    if yfire < 60:
-        yfire = 70
-    i = 0
-    listOfFires = [(xfire, yfire)]
-    while i < j-1:  # Corrected loop condition |||| 
-        xfire = GetRandomLocationOnScreen(SCREEN_WIDTH)
-        yfire = GetRandomLocationOnScreen(SCREEN_HEIGHT)
-        if yfire < 60:
-            yfire = 70
-            
-        listOfFires.append((xfire, yfire))
-        i += 1
-    return listOfFires
-        
+pygame.display.set_caption('test123')
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -104,11 +80,12 @@ running = True
 #Fire Logic
 numberOfFiresOnScreen = 6
 listOfFire_xy = CreateListOfFiresAndLocations(SCREEN_WIDTH, SCREEN_HEIGHT, numberOfFiresOnScreen)
+jailLocation = (10, 50)
 
-print(listOfFire_xy)
-    
-listOfFire_xy
-listOfFire_xy
+#portalz logic
+portalLocation_In = (700, 100)
+portalLocation_Out = (50, 500)
+
 # THE REAL MAIN LOOP
 while running:
     
@@ -182,6 +159,7 @@ while running:
             elif event.type == QUIT:
                 running = False
         screen.fill("#1854e7") 
+        
 
         screen.blit(topBorder, (0, 0))
 
@@ -253,30 +231,25 @@ while running:
 
         screen.blit(topBorder, (0, 0))
 
-        #player1 = pygame.Surface((50, 50)) #creates a surface var, that is from the player1 func of pygame. and we gave it size of 50 by 50
-        #player1.fill(cubeColor) #this new surface can be used as the screen surface, so we can change its color. now we make it white.
-        #rect = player1.get_rect() #get reckt lol.. we save the last surface in this rect var as a rectangular.
-
         player1 = pygame.image.load(currentHeroPlayer1)
         player2 = pygame.image.load(currentHeroPlayer2)
         endOfLevel = pygame.image.load("finish.png")
-        #endOfLevel = pygame.Surface((50, 50))
-        #endOfLevel.fill("red")   
-        #rect2 = endOfLevel.get_rect()
+        portalIn = pygame.image.load("portalIn.png")
+        portalOut = pygame.image.load("portalOut.png")
+        jail = pygame.image.load("hospital.png")
+    
+        fire = pygame.image.load("fire.png")
 
-        #we can't just make the object and it magicaly apear on the screen, we need to assign it to diferent object, or in our case we will "blit" it to the screen.
-        #blit() - stands for BLock Transfer, is how you copy the contents of one Surface to another.
-        #You can only .blit() from one Surface to another, but since the screen is just another Surface, that’s not a problem.
-
-        #surf_center = (
-        #    (SCREEN_WIDTH - player1.get_width())/2,
-        #    (SCREEN_HEIGHT - player1.get_height())/2
-        #)
-        #surf_center
 
         screen.blit(endOfLevel, (entOfLevelLocation_x, entOfLevelLocation_y))
+        screen.blit(portalIn, portalLocation_In)
+        screen.blit(portalOut, portalLocation_Out)
+        screen.blit(jail, jailLocation)
+        for fireLocation in listOfFire_xy:
+            screen.blit(fire, (fireLocation))
         screen.blit(player1, (player1_location_x, player1_location_y)) #here we have the screen var from line 36. we "blit" it to the player1 var, and we set the location on witch to draw - the center.
         screen.blit(player2, (player2_location_x, player2_location_y))
+        
 
         player1LivesTxt = font_Rockwell.render("Player 1 Lives: " + str(player1Lives), True, (0,0,0))
         player2LivesTxt = font_Rockwell.render("Player 2 Lives: " + str(player2Lives), True, (0,0,0))
@@ -289,12 +262,35 @@ while running:
             screen.blit(txtsurf2,(300, 50))
             cubeColor = ((randrange(255)), (randrange(255)), (randrange(255)))
 
+        #logic for the finish line player 1
         if (player1_location_x == entOfLevelLocation_x and player1_location_y == entOfLevelLocation_y):
             endOfGameBool = True
             winnerLastRound = True
             player2Lives = player2Lives - 1
             lastWinner = "1"
-
+        
+        #portal Logic
+        #p1
+        if (player1_location_x == portalLocation_In[0] and player1_location_y == portalLocation_In[1]):
+                player1_location_x = portalLocation_Out[0]
+                player1_location_y = portalLocation_Out[1]
+        #p2
+        if (player2_location_x == portalLocation_In[0] and player2_location_y == portalLocation_In[1]):
+                player2_location_x = portalLocation_Out[0]
+                player2_location_y = portalLocation_Out[1]
+            
+        #fire Logic for player 1
+        for fireLocation in listOfFire_xy:
+            if (player1_location_x == fireLocation[0] and player1_location_y == fireLocation[1]):
+                player1_location_x = jailLocation[0]+20
+                player1_location_y = jailLocation[1]+40
+        #fire Logic for player 2
+        for fireLocation in listOfFire_xy:
+            if (player2_location_x == fireLocation[0] and player2_location_y == fireLocation[1]):
+                player2_location_x = jailLocation[0]+20
+                player2_location_y = jailLocation[1]+40
+        
+        #logic for the finish line player 1
         if (player2_location_x == entOfLevelLocation_x and player2_location_y == entOfLevelLocation_y):
             endOfGameBool = True
             winnerLastRound = True
@@ -328,8 +324,7 @@ while running:
         if player2Lives == 0:
             print("lives are 0 for player 2")
             isThereAWinner = True
-            winnerIs = "Player 2"
-
+            winnerIs = "Player 1"
 
         pygame.display.flip()
 
