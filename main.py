@@ -20,11 +20,12 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     QUIT,
+    K_LSHIFT,
 )
 
 #init the game
 pygame.init()
-pygame.display.set_caption('Square Hop v0.1')
+pygame.display.set_caption('Square Tap v0.1')
 Icon = pygame.image.load('hero150x50.png')
 pygame.display.set_icon(Icon)
 
@@ -40,6 +41,7 @@ currentHeroPlayer1 = hero1
 isHeroSellectedPlayer1 = False
 currentHeroPlayer2 = hero2
 isHeroSellectedPlayer2 = False
+moveLength = 0.5
 
 font = pygame.font.SysFont("Impact", 26)
 font_Rockwell = pygame.font.SysFont("Rockwell", 20)
@@ -57,7 +59,7 @@ if player2_location_y <60:
 endOfGameBool = False
 winnerLastRound = False
 winState = False
-moveLenght = 10 #how much do you move when button pressed
+
 
 cubeColor = ((randrange(50)), (randrange(255)), (randrange(255)))
 
@@ -190,51 +192,54 @@ while running:
 
     #Game Loop - everything in game is happening here
     while running and isThereAWinner == False:
+        keys = pygame.key.get_pressed()
+        
         for event in pygame.event.get():
-            if event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    running = False
-                if event.key == K_LEFT and (player1_location_x > (SCREEN_WIDTH - SCREEN_WIDTH)) and endOfGameBool == False:
-                    #print(player1_location_x)
-                    player1_location_x = player1_location_x - moveLenght
-                    winnerLastRound = False
-                if event.key == K_RIGHT and (player1_location_x < (SCREEN_WIDTH - 50)) and endOfGameBool == False:
-                    #print(player1_location_x)
-                    player1_location_x = player1_location_x + moveLenght 
-                    winnerLastRound = False
-                if event.key == K_UP and (player1_location_y > (SCREEN_HEIGHT - SCREEN_HEIGHT + 50)) and endOfGameBool == False:
-                    #print(player1_location_y)
-                    player1_location_y = player1_location_y - moveLenght  
-                    winnerLastRound = False
-                if event.key == K_DOWN and (player1_location_y < (SCREEN_HEIGHT - 50)) and endOfGameBool == False:
-                    #print(player1_location_y)
-                    player1_location_y = player1_location_y + moveLenght  
-                    winnerLastRound = False
-                if event.key == K_a and (player2_location_x > (SCREEN_WIDTH - SCREEN_WIDTH)) and endOfGameBool == False:
-                    #print(player2_location_x)
-                    player2_location_x = player2_location_x - moveLenght
-                    winnerLastRound = False
-                if event.key == K_d and (player2_location_x < (SCREEN_WIDTH - 50)) and endOfGameBool == False:
-                    #print(player2_location_x)
-                    player2_location_x = player2_location_x + moveLenght 
-                    winnerLastRound = False
-                if event.key == K_w and (player2_location_y > (SCREEN_HEIGHT - SCREEN_HEIGHT + 50)) and endOfGameBool == False:
-                    #print(player2_location_y)
-                    player2_location_y = player2_location_y - moveLenght  
-                    winnerLastRound = False
-                if event.key == K_s and (player2_location_y < (SCREEN_HEIGHT - 50)) and endOfGameBool == False:
-                    #print(player2_location_y)
-                    player2_location_y = player2_location_y + moveLenght  
-                    winnerLastRound = False
-                if event.key == K_r:
-                    endOfGameBool = True
-            elif event.type == QUIT:
+            if event.type == QUIT:
                 running = False
+            
+        if keys[K_ESCAPE]:
+            running = False
+            
+        # Player 1 movement
+        if keys[K_LEFT] and (player1_location_x > (SCREEN_WIDTH - SCREEN_WIDTH)) and not endOfGameBool:
+            player1_location_x -= moveLength
+            winnerLastRound = False
+        if keys[K_RIGHT] and (player1_location_x < (SCREEN_WIDTH - 50)) and not endOfGameBool:
+            player1_location_x += moveLength
+            winnerLastRound = False
+        if keys[K_UP] and (player1_location_y > (SCREEN_HEIGHT - SCREEN_HEIGHT + 50)) and not endOfGameBool:
+            player1_location_y -= moveLength
+            winnerLastRound = False
+        if keys[K_DOWN] and (player1_location_y < (SCREEN_HEIGHT - 50)) and not endOfGameBool:
+            player1_location_y += moveLength
+            winnerLastRound = False
 
+            # Player 2 movement
+        if keys[K_a] and (player2_location_x > (SCREEN_WIDTH - SCREEN_WIDTH)) and not endOfGameBool:
+            player2_location_x -= moveLength
+            winnerLastRound = False
+        if keys[K_d] and (player2_location_x < (SCREEN_WIDTH - 50)) and not endOfGameBool:
+            player2_location_x += moveLength
+            winnerLastRound = False
+        if keys[K_w] and (player2_location_y > (SCREEN_HEIGHT - SCREEN_HEIGHT + 50)) and not endOfGameBool:
+            player2_location_y -= moveLength
+            winnerLastRound = False
+        if keys[K_s] and (player2_location_y < (SCREEN_HEIGHT - 50)) and not endOfGameBool:
+            player2_location_y += moveLength
+            winnerLastRound = False
+        if keys[K_LSHIFT]:
+            moveLength = 1
+        if keys[K_LSHIFT] == False:
+            moveLength = 0.5
+        if keys[K_r]:
+            endOfGameBool = True   
+            
         screen.fill((87,178,77)) #we did create the screen var on line 21. now we change its color(fill it) with the RGB values of that color. pretty sure we can just type some of the colors like "black" or white
 
         screen.blit(topBorder, (0, 0))
 
+        #loadimages
         player1 = pygame.image.load(currentHeroPlayer1)
         player2 = pygame.image.load(currentHeroPlayer2)
         endOfLevel = pygame.image.load("finish.png")
@@ -243,6 +248,14 @@ while running:
         jail = pygame.image.load("hospital.png")
     
         fire = pygame.image.load("fire.png")
+        
+        player1_rect = player1.get_rect(center=(player1_location_x, player1_location_y))
+        player2_rect = player2.get_rect(center=(player2_location_x, player2_location_y))
+        endOfLevel_rect = endOfLevel.get_rect(topleft=(entOfLevelLocation_x, entOfLevelLocation_y))
+        portalIn_rect = portalIn.get_rect(topleft=portalLocation_In)
+        portalOut_rect = portalOut.get_rect(topleft=portalLocation_Out)
+        jail_rect = jail.get_rect(topleft=jailLocation)
+        fire_rects = [fire.get_rect(topleft=fireLocation) for fireLocation in listOfFire_xy]
 
 
         screen.blit(endOfLevel, (entOfLevelLocation_x, entOfLevelLocation_y))
@@ -266,8 +279,12 @@ while running:
             screen.blit(txtsurf2,(300, 50))
             cubeColor = ((randrange(255)), (randrange(255)), (randrange(255)))
 
+        
+        
+        
         #logic for the finish line player 1
-        if (player1_location_x == entOfLevelLocation_x and player1_location_y == entOfLevelLocation_y):
+        #if (player1_location_x == entOfLevelLocation_x and player1_location_y == entOfLevelLocation_y):
+        if player1_rect.colliderect(endOfLevel_rect):
             endOfGameBool = True
             winnerLastRound = True
             player2Lives = player2Lives - 1
@@ -275,27 +292,23 @@ while running:
         
         #portal Logic
         #p1
-        if (player1_location_x == portalLocation_In[0] and player1_location_y == portalLocation_In[1]):
+        if player1_rect.colliderect(portalIn_rect):
                 player1_location_x = portalLocation_Out[0]
                 player1_location_y = portalLocation_Out[1]
         #p2
-        if (player2_location_x == portalLocation_In[0] and player2_location_y == portalLocation_In[1]):
+        if player2_rect.colliderect(portalIn_rect):
                 player2_location_x = portalLocation_Out[0]
                 player2_location_y = portalLocation_Out[1]
             
-        #fire Logic for player 1
-        for fireLocation in listOfFire_xy:
-            if (player1_location_x == fireLocation[0] and player1_location_y == fireLocation[1]):
-                player1_location_x = jailLocation[0]+20
-                player1_location_y = jailLocation[1]+40
-        #fire Logic for player 2
-        for fireLocation in listOfFire_xy:
-            if (player2_location_x == fireLocation[0] and player2_location_y == fireLocation[1]):
-                player2_location_x = jailLocation[0]+20
-                player2_location_y = jailLocation[1]+40
+        #fire Logic for player 1/2
+        for fire_rect in fire_rects:
+            if player1_rect.colliderect(fire_rect):
+                player1_rect.topleft = (jailLocation[0] + 20, jailLocation[1] + 40)
+            if player2_rect.colliderect(fire_rect):
+                player2_rect.topleft = (jailLocation[0] + 20, jailLocation[1] + 40)
         
-        #logic for the finish line player 1
-        if (player2_location_x == entOfLevelLocation_x and player2_location_y == entOfLevelLocation_y):
+        #logic for the finish line player 2
+        if player2_rect.colliderect(endOfLevel_rect):
             endOfGameBool = True
             winnerLastRound = True
             player1Lives = player1Lives - 1
